@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "finiq": {
+      "command": "npx",
+      "args": ["@finiq/mcp-server"],
+      "env": {
+        "FINIQ_BASE_URL": "https://demo.finiq.money",
+        "FINIQ_API_KEY": "your-api-key-here",
+        "FINIQ_TOOL_MODE": "all"
+      }
+    },
+    "finiq-grouped": {
+      "command": "npx",
+      "args": ["@finiq/mcp-server"],
+      "env": {
+        "FINIQ_BASE_URL": "https://demo.finiq.money",
+        "FINIQ_API_KEY": "your-api-key-here",
+        "FINIQ_TOOL_MODE": "grouped",
+        "FINIQ_ENABLED_GROUPS": "warehouse,project,employee,transactionDocument"
+      }
+    },
+    "finiq-dynamic": {
+      "command": "npx",
+      "args": ["@finiq/mcp-server"],
+      "env": {
+        "FINIQ_BASE_URL": "https://demo.finiq.money",
+        "FINIQ_API_KEY": "your-api-key-here",
+        "FINIQ_TOOL_MODE": "dynamic"
+      }
+    },
+    "finiq-local": {
+      "command": "node",
+      "args": ["C:/Users/scom8/dev/finiq-mcp-server/dist/bin/finiq-mcp.js"],
+      "env": {
+        "FINIQ_BASE_URL": "https://demo.finiq.money",
+        "FINIQ_API_KEY": "your-api-key-here",
+        "FINIQ_LOCAL_SWAGGER": "C:/Users/scom8/dev/finiq-mcp-server/test/fixtures/finance-swagger.json"
+      }
+    }
+  }
+}

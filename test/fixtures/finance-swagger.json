@@ -1,0 +1,229 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "Finance API", "version": "1.0.0" },
+  "paths": {
+    "/api/app/warehouse": {
+      "get": {
+        "operationId": "Warehouse_GetList",
+        "tags": ["Warehouse"],
+        "summary": "Get list of warehouses",
+        "parameters": [
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "sorting", "in": "query", "schema": { "type": "string" } },
+          { "name": "skipCount", "in": "query", "schema": { "type": "integer", "default": 0 } },
+          { "name": "maxResultCount", "in": "query", "schema": { "type": "integer", "default": 10 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Finance.Application.Contracts.PagedResultDtoOfWarehouseDto" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "Warehouse_Create",
+        "tags": ["Warehouse"],
+        "summary": "Create a new warehouse",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Finance.Application.Contracts.CreateWarehouseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Finance.Application.Contracts.WarehouseDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/warehouse/{id}": {
+      "get": {
+        "operationId": "Warehouse_Get",
+        "tags": ["Warehouse"],
+        "summary": "Get a warehouse by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Finance.Application.Contracts.WarehouseDto" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "Warehouse_Update",
+        "tags": ["Warehouse"],
+        "summary": "Update a warehouse",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Finance.Application.Contracts.UpdateWarehouseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Warehouse_Delete",
+        "tags": ["Warehouse"],
+        "summary": "Delete a warehouse",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "204": { "description": "No Content" }
+        }
+      }
+    },
+    "/api/app/warehouse/lookup": {
+      "get": {
+        "operationId": "Warehouse_GetLookup",
+        "tags": ["Warehouse"],
+        "summary": "Get warehouse lookup data",
+        "parameters": [
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "maxResultCount", "in": "query", "schema": { "type": "integer", "default": 50 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Volo.Abp.Application.Dtos.ComboboxItemDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/cash-flow-report": {
+      "post": {
+        "operationId": "CashFlowReport_Generate",
+        "tags": ["CashFlowReport"],
+        "summary": "Generate cash flow report",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Finance.Application.Contracts.CashFlowReportInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/app/employee": {
+      "get": {
+        "operationId": "Employee_GetList",
+        "tags": ["Employee"],
+        "summary": "Get list of employees",
+        "parameters": [
+          { "name": "filter", "in": "query", "schema": { "type": "string" } },
+          { "name": "skipCount", "in": "query", "schema": { "type": "integer" } },
+          { "name": "maxResultCount", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/identity/users": {
+      "get": {
+        "operationId": "Identity_GetUsers",
+        "tags": ["Identity"],
+        "summary": "ABP Identity users (not app-service)",
+        "parameters": [],
+        "responses": { "200": { "description": "Success" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Finance.Application.Contracts.WarehouseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "Finance.Application.Contracts.CreateWarehouseDto": {
+        "type": "object",
+        "required": ["code", "name"],
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "isActive": { "type": "boolean", "default": true }
+        }
+      },
+      "Finance.Application.Contracts.UpdateWarehouseDto": {
+        "type": "object",
+        "required": ["code", "name"],
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "Finance.Application.Contracts.PagedResultDtoOfWarehouseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Finance.Application.Contracts.WarehouseDto" }
+          },
+          "totalCount": { "type": "integer" }
+        }
+      },
+      "Finance.Application.Contracts.CashFlowReportInput": {
+        "type": "object",
+        "required": ["startDate", "endDate"],
+        "properties": {
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "cashAccountId": { "type": "string", "format": "uuid", "nullable": true }
+        }
+      },
+      "Volo.Abp.Application.Dtos.ComboboxItemDto": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string" },
+          "text": { "type": "string" }
+        }
+      }
+    }
+  }
+}
