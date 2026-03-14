@@ -119,7 +119,16 @@ function openApiToJsonSchema(schema: OpenApiSchema, description?: string): JsonS
     description: description ?? schema.description ?? cleanSchemaDescription(schema),
   };
 
-  if (schema.enum) result.enum = schema.enum;
+  if (schema.enum) {
+    result.enum = schema.enum;
+    const names = schema['x-enumNames'];
+    if (names && names.length === schema.enum.length) {
+      const enumDesc = schema.enum.map((v, i) => `${v}=${names[i]}`).join(', ');
+      result.description = result.description
+        ? `${result.description} (${enumDesc})`
+        : enumDesc;
+    }
+  }
   if (schema.default !== undefined) result.default = schema.default;
   if (schema.format) result.format = schema.format;
 

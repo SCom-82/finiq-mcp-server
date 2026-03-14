@@ -70,6 +70,111 @@ describe('operationToInputSchema', () => {
     expect(schema.required).toContain('name');
   });
 
+  it('enriches enum description from x-enumNames', () => {
+    const op: ParsedOperation = {
+      path: '/api/app/account',
+      method: 'POST',
+      operationId: 'Account_Create',
+      summary: 'Create account',
+      tags: ['Account'],
+      parameters: [],
+      requestBodySchema: {
+        type: 'object',
+        properties: {
+          type: {
+            type: 'integer',
+            enum: [1, 2, 3],
+            'x-enumNames': ['Asset', 'Liability', 'Equity'],
+          },
+        },
+      },
+      requestBodyRequired: true,
+    };
+
+    const schema = operationToInputSchema(op);
+    expect(schema.properties!['type'].enum).toEqual([1, 2, 3]);
+    expect(schema.properties!['type'].description).toContain('1=Asset');
+    expect(schema.properties!['type'].description).toContain('2=Liability');
+    expect(schema.properties!['type'].description).toContain('3=Equity');
+  });
+
+  it('appends enum labels to existing description', () => {
+    const op: ParsedOperation = {
+      path: '/api/app/account',
+      method: 'POST',
+      operationId: 'Account_Create',
+      summary: 'Create account',
+      tags: ['Account'],
+      parameters: [],
+      requestBodySchema: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'integer',
+            description: 'Import status',
+            enum: [0, 1],
+            'x-enumNames': ['Pending', 'Completed'],
+          },
+        },
+      },
+      requestBodyRequired: true,
+    };
+
+    const schema = operationToInputSchema(op);
+    expect(schema.properties!['status'].description).toBe('Import status (0=Pending, 1=Completed)');
+  });
+
+  it('does not modify description when x-enumNames is missing', () => {
+    const op: ParsedOperation = {
+      path: '/api/app/account',
+      method: 'POST',
+      operationId: 'Account_Create',
+      summary: 'Create account',
+      tags: ['Account'],
+      parameters: [],
+      requestBodySchema: {
+        type: 'object',
+        properties: {
+          type: {
+            type: 'integer',
+            enum: [1, 2, 3],
+          },
+        },
+      },
+      requestBodyRequired: true,
+    };
+
+    const schema = operationToInputSchema(op);
+    expect(schema.properties!['type'].enum).toEqual([1, 2, 3]);
+    expect(schema.properties!['type'].description).toBeUndefined();
+  });
+
+  it('enriches enum description in query parameters', () => {
+    const op: ParsedOperation = {
+      path: '/api/app/report',
+      method: 'GET',
+      operationId: 'Report_GetList',
+      summary: 'Get reports',
+      tags: ['Report'],
+      parameters: [
+        {
+          name: 'section',
+          in: 'query',
+          schema: {
+            type: 'integer',
+            enum: [1, 2],
+            'x-enumNames': ['Revenue', 'Expenses'],
+          },
+        },
+      ],
+      requestBodyRequired: false,
+    };
+
+    const schema = operationToInputSchema(op);
+    expect(schema.properties!['section'].description).toContain('1=Revenue');
+    expect(schema.properties!['section'].description).toContain('2=Expenses');
+  });
+
   it('merges path params and body into one schema', () => {
     const op: ParsedOperation = {
       path: '/api/app/warehouse/{id}',

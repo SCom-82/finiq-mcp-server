@@ -1,0 +1,9 @@
+services:
+  finiq-mcp:
+    build: .
+    image: finiq/mcp-server:latest
+    stdin_open: true
+    environment:
+      - FINIQ_BASE_URL=${FINIQ_BASE_URL}
+      - FINIQ_API_KEY=${FINIQ_API_KEY}
+      - FINIQ_TOOL_MODE=${FINIQ_TOOL_MODE:-all}
